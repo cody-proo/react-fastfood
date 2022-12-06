@@ -8,10 +8,14 @@ export const getShop = () => {
   return httpClient.get("/shop-item/shop");
 };
 
-export const getProduct = (category) => {
-  return httpClient.get(
-    `/shop-item/product${category ? `?category=${category}` : ""}`
-  );
+export const getProduct = (category, shop) => {
+  let query = "";
+  if (category) query = `?category=${category}`;
+  if (shop) {
+    if (category) query += `&shop=${shop}`;
+    else query = `?shop=${shop}`;
+  }
+  return httpClient.get(`/shop-item/product${query}`);
 };
 
 export const getCategory = (shop) => {

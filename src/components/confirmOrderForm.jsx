@@ -9,18 +9,6 @@ import {
 } from "../services";
 import moment from "jalali-moment";
 
-// sale/shop?settle=true&credit=undefined
-
-// https://test.gymsoft.ir/api/transaction?gift=false
-// {
-//   "bank": 1,
-//   "bankAmount": 20000,
-//   "cash": 1,
-//   "cashAmount": 20000,
-//   "user": 5,
-//   "submitAt": "2022-12-06 16:15"
-// }
-
 const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
   const [openTransaction, setOpenTransaction] = useState(false);
   const transactionClass = openTransaction
@@ -197,7 +185,9 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
       <div className={detailContainerClass}>
         <div className={detailClass}>
           <span>جمع کل</span>
-          <span>{new Intl.NumberFormat("fa-IR").format(totalPriceOrder)} تومان</span>
+          <span>
+            {new Intl.NumberFormat("fa-IR").format(totalPriceOrder)} تومان
+          </span>
         </div>
         <button onClick={() => setOpenTransaction(true)} className={payClass}>
           پرداخت نهایی
