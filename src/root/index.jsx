@@ -1,118 +1,131 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import GlobalStyle from "./globalStyle";
-import {
-  AiOutlineShoppingCart,
-  AiOutlinePlus,
-  AiOutlineMinus,
-} from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import Modal from "../components/modal";
 import AuthorizedForm from "../components/authorizedForm";
 import ConfirmOrderForm from "../components/confirmOrderForm";
+import { useQuery } from "react-query";
+import { getCategory, getProduct, getShop } from "../services";
 
 const items = [
   { name: "همه", id: 1 },
   { name: "کارواش", id: 2 },
-  { name: "رستوران", id: 3 },
-  { name: "آرایشگاه", id: 4 },
-  { name: "ماساژ", id: 5 },
-  { name: "بوتیک مردانه", id: 6 },
-  { name: "بوتیک زنانه", id: 7 },
-  { name: "کافه", id: 8 },
+  // { name: "رستوران", id: 3 },
+  // { name: "آرایشگاه", id: 4 },
+  // { name: "ماساژ", id: 5 },
+  // { name: "بوتیک مردانه", id: 6 },
+  // { name: "بوتیک زنانه", id: 7 },
+  // { name: "کافه", id: 8 },
 ];
 
 const subItems = [
-  { name: "نوشیدنی", id: 1 },
-  { name: "عصرانه", id: 2 },
-  { name: "غذای گرم", id: 3 },
-  { name: "غذای سرد", id: 4 },
-  { name: "صبحانه", id: 5 },
-  { name: "شام", id: 6 },
-  { name: "ناهار", id: 7 },
-  { name: "قهوه", id: 8 },
-  { name: "همبرگر", id: 9 },
-  { name: "کارواش", id: 9 },
-  { name: "رستوران", id: 13 },
-  { name: "آرایشگاه", id: 14 },
-  { name: "ماساژ", id: 15 },
-  { name: "بوتیک مردانه", id: 16 },
-  { name: "بوتیک زنانه", id: 17 },
-  { name: "کافه", id: 18 },
-  { name: "نوشیدنی", id: 1 },
-  { name: "عصرانه", id: 2 },
-  { name: "غذای گرم", id: 3 },
-  { name: "غذای سرد", id: 4 },
-  { name: "صبحانه", id: 5 },
-  { name: "شام", id: 6 },
-  { name: "ناهار", id: 7 },
-  { name: "قهوه", id: 8 },
-  { name: "همبرگر", id: 9 },
-  { name: "کارواش", id: 9 },
-  { name: "رستوران", id: 13 },
-  { name: "آرایشگاه", id: 14 },
-  { name: "ماساژ", id: 15 },
-  { name: "ماساژ", id: 15 },
-  { name: "بوتیک مردانه", id: 16 },
-  { name: "بوتیک زنانه", id: 17 },
-  { name: "کافه", id: 18 },
-  { name: "نوشیدنی", id: 1 },
-  { name: "عصرانه", id: 2 },
-  { name: "غذای گرم", id: 3 },
-  { name: "غذای سرد", id: 4 },
-  { name: "صبحانه", id: 5 },
-  { name: "شام", id: 6 },
-  { name: "ناهار", id: 7 },
-  { name: "قهوه", id: 8 },
-  { name: "همبرگر", id: 9 },
-  { name: "کارواش", id: 9 },
-  { name: "رستوران", id: 13 },
-  { name: "آرایشگاه", id: 14 },
-  { name: "ماساژ", id: 15 },
-  { name: "ماساژ", id: 15 },
-  { name: "بوتیک مردانه", id: 16 },
-  { name: "بوتیک زنانه", id: 17 },
-  { name: "کافه", id: 18 },
-  { name: "نوشیدنی", id: 1 },
-  { name: "عصرانه", id: 2 },
-  { name: "غذای گرم", id: 3 },
-  { name: "غذای سرد", id: 4 },
-  { name: "صبحانه", id: 5 },
-  { name: "شام", id: 6 },
-  { name: "ناهار", id: 7 },
-  { name: "قهوه", id: 8 },
-  { name: "همبرگر", id: 9 },
-  { name: "کارواش", id: 9 },
-  { name: "رستوران", id: 13 },
-  { name: "آرایشگاه", id: 14 },
-  { name: "ماساژ", id: 15 },
-  { name: "ماساژ", id: 15 },
-  { name: "بوتیک مردانه", id: 16 },
-  { name: "بوتیک زنانه", id: 17 },
-  { name: "کافه", id: 18 },
-  { name: "نوشیدنی", id: 1 },
-  { name: "عصرانه", id: 2 },
-  { name: "غذای گرم", id: 3 },
-  { name: "غذای سرد", id: 4 },
-  { name: "صبحانه", id: 5 },
-  { name: "شام", id: 6 },
-  { name: "ناهار", id: 7 },
-  { name: "قهوه", id: 8 },
-  { name: "همبرگر", id: 9 },
-  { name: "کارواش", id: 9 },
-  { name: "رستوران", id: 13 },
-  { name: "آرایشگاه", id: 14 },
-  { name: "ماساژ", id: 15 },
-  { name: "بوتیک مردانه", id: 16 },
+  // { name: "نوشیدنی", id: 1 },
+  // { name: "عصرانه", id: 2 },
+  // { name: "غذای گرم", id: 3 },
+  // { name: "غذای سرد", id: 4 },
+  // { name: "صبحانه", id: 5 },
+  // { name: "شام", id: 6 },
+  // { name: "ناهار", id: 7 },
+  // { name: "قهوه", id: 8 },
+  // { name: "همبرگر", id: 9 },
+  // { name: "کارواش", id: 9 },
+  // { name: "رستوران", id: 13 },
+  // { name: "آرایشگاه", id: 14 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "بوتیک مردانه", id: 16 },
+  // { name: "بوتیک زنانه", id: 17 },
+  // { name: "کافه", id: 18 },
+  // { name: "نوشیدنی", id: 1 },
+  // { name: "عصرانه", id: 2 },
+  // { name: "غذای گرم", id: 3 },
+  // { name: "غذای سرد", id: 4 },
+  // { name: "صبحانه", id: 5 },
+  // { name: "شام", id: 6 },
+  // { name: "ناهار", id: 7 },
+  // { name: "قهوه", id: 8 },
+  // { name: "همبرگر", id: 9 },
+  // { name: "کارواش", id: 9 },
+  // { name: "رستوران", id: 13 },
+  // { name: "آرایشگاه", id: 14 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "بوتیک مردانه", id: 16 },
+  // { name: "بوتیک زنانه", id: 17 },
+  // { name: "کافه", id: 18 },
+  // { name: "نوشیدنی", id: 1 },
+  // { name: "عصرانه", id: 2 },
+  // { name: "غذای گرم", id: 3 },
+  // { name: "غذای سرد", id: 4 },
+  // { name: "صبحانه", id: 5 },
+  // { name: "شام", id: 6 },
+  // { name: "ناهار", id: 7 },
+  // { name: "قهوه", id: 8 },
+  // { name: "همبرگر", id: 9 },
+  // { name: "کارواش", id: 9 },
+  // { name: "رستوران", id: 13 },
+  // { name: "آرایشگاه", id: 14 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "بوتیک مردانه", id: 16 },
+  // { name: "بوتیک زنانه", id: 17 },
+  // { name: "کافه", id: 18 },
+  // { name: "نوشیدنی", id: 1 },
+  // { name: "عصرانه", id: 2 },
+  // { name: "غذای گرم", id: 3 },
+  // { name: "غذای سرد", id: 4 },
+  // { name: "صبحانه", id: 5 },
+  // { name: "شام", id: 6 },
+  // { name: "ناهار", id: 7 },
+  // { name: "قهوه", id: 8 },
+  // { name: "همبرگر", id: 9 },
+  // { name: "کارواش", id: 9 },
+  // { name: "رستوران", id: 13 },
+  // { name: "آرایشگاه", id: 14 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "بوتیک مردانه", id: 16 },
+  // { name: "بوتیک زنانه", id: 17 },
+  // { name: "کافه", id: 18 },
+  // { name: "نوشیدنی", id: 1 },
+  // { name: "عصرانه", id: 2 },
+  // { name: "غذای گرم", id: 3 },
+  // { name: "غذای سرد", id: 4 },
+  // { name: "صبحانه", id: 5 },
+  // { name: "شام", id: 6 },
+  // { name: "ناهار", id: 7 },
+  // { name: "قهوه", id: 8 },
+  // { name: "همبرگر", id: 9 },
+  // { name: "کارواش", id: 9 },
+  // { name: "رستوران", id: 13 },
+  // { name: "آرایشگاه", id: 14 },
+  // { name: "ماساژ", id: 15 },
+  // { name: "بوتیک مردانه", id: 16 },
   { name: "بوتیک زنانه", id: 17 },
   { name: "کافه", id: 18 },
 ];
 
 const Root = () => {
-  const [activeItem, setActiveItem] = useState(1);
+  const [activeItem, setActiveItem] = useState(0);
+  const [activeCategory, setActiveCategory] = useState(0);
   const onChangeActiveItem = (data) => setActiveItem(data);
   const [openOrderInMobile, setOpenOrderInMobile] = useState(false);
   const [authorizedModalStatus, setAuthorizedModalStatus] = useState(false);
   const [confirmModalStatus, setConfirmModalStatus] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const { isLoading: shopLoading, data: shopData } = useQuery(
+    ["shop", activeItem],
+    () => getShop()
+  );
+  const { isLoading: productLoading, data: productData } = useQuery(
+    ["product", activeCategory, activeItem],
+    () => getProduct(activeCategory)
+  );
+  const { isLoading: categoryLoading, data: categoryData } = useQuery(
+    ["category", activeItem],
+    () => getCategory(activeItem)
+  );
+  const [user, setUser] = useState();
   const orderRef = useRef(null);
 
   useEffect(() => {
@@ -132,6 +145,11 @@ const Root = () => {
     };
   }, [openOrderInMobile]);
 
+  const totalPriceOrder = orders?.reduce(
+    (acc, order) => acc + order.price * order.count,
+    0
+  );
+
   return (
     <Container>
       <Modal
@@ -142,6 +160,7 @@ const Root = () => {
         <AuthorizedForm
           setAuthorizedModalStatus={setAuthorizedModalStatus}
           setConfirmModalStatus={setConfirmModalStatus}
+          setUser={setUser}
         />
       </Modal>
       <Modal
@@ -149,38 +168,55 @@ const Root = () => {
         onClose={() => setConfirmModalStatus(false)}
         title="لیست سفارشات نهایی"
       >
-        <ConfirmOrderForm />
+        <ConfirmOrderForm
+          orders={orders}
+          user={user}
+          totalPriceOrder={totalPriceOrder}
+          isOpen={confirmModalStatus}
+        />
       </Modal>
       <GlobalStyle />
       <Header>
         <ul className="list">
-          {items.map((item) => (
-            <li
-              key={item.name}
-              onClick={onChangeActiveItem.bind(null, item.id)}
-              className={`item ${activeItem === item.id ? "item--active" : ""}`}
-            >
-              <a
-                className="item-link"
-                onClick={(e) => e.preventDefault()}
-                href={item.name}
-              >
-                {item.name}
-              </a>
-            </li>
-          ))}
+          {shopLoading
+            ? "درحال دریافت اطلاعات"
+            : [{ title: "همه", id: 0 }, ...(shopData || [])]?.map((item) => (
+                <li
+                  key={item.name + "-" + item.id}
+                  onClick={onChangeActiveItem.bind(null, item.id)}
+                  className={`item ${
+                    activeItem === item.id ? "item--active" : ""
+                  }`}
+                >
+                  <a
+                    className="item-link"
+                    onClick={(e) => e.preventDefault()}
+                    href={item.title}
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
         </ul>
       </Header>
       <Group className="group">
-        {subItems.map((subItem) => (
-          <div className="group-item" key={subItem.id}>
-            <img
-              className="group-image"
-              src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-            />
-            <div className="group-text">{subItem.name}</div>
-          </div>
-        ))}
+        {categoryLoading
+          ? "درحال دریافت اطلاعات"
+          : [{ id: 0, title: "همه" }, ...(categoryData || [])]?.map(
+              (category) => (
+                <div
+                  onClick={() => setActiveCategory(category.id)}
+                  className="group-item"
+                  key={category.id + "-" + category.title}
+                >
+                  <img
+                    className="group-image"
+                    src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
+                  />
+                  <div className="group-text">{category.title}</div>
+                </div>
+              )
+            )}
       </Group>
       <DetailContainer>
         <Products>
@@ -194,20 +230,44 @@ const Root = () => {
             </button>
           </div>
           <div className="list">
-            {subItems.map((subItem) => (
-              <div className="product" key={subItem.id}>
-                <img
-                  className="product-img"
-                  src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-                  alt=""
-                />
-                <h3 className="product-title">
-                  <span>{subItem.name}</span>
-                  <span>130.000.000 تومان</span>
-                </h3>
-                <button className="product-bucket">افزودن به سبد خرید</button>
-              </div>
-            ))}
+            {productLoading
+              ? "درحال دریافت اطلاعات"
+              : productData?.map((product) => (
+                  <div
+                    className="product"
+                    key={product.id + "-" + product.title}
+                  >
+                    <img
+                      className="product-img"
+                      src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
+                      alt=""
+                    />
+                    <h3 className="product-title">
+                      <span>{product.title}</span>
+                      <span>
+                        {new Intl.NumberFormat("fa-IR").format(product.price)}{" "}
+                        تومان
+                      </span>
+                    </h3>
+                    <button
+                      onClick={() =>
+                        setOrders((prev) => {
+                          const state = [...prev];
+                          const index = prev?.findIndex(
+                            (order) => order.id === product.id
+                          );
+                          if (index === -1)
+                            return [{ ...product, count: 1 }, ...state];
+                          state[index].count = state[index].count + 1;
+                          return state;
+                        })
+                      }
+                      className="product-bucket"
+                    >
+                      افزودن به سبد خرید
+                    </button>
+                  </div>
+                ))}
           </div>
         </Products>
         <div
@@ -217,7 +277,10 @@ const Root = () => {
           <div className="header">
             <div className="header-content">
               <h1 className="title">سفارشات</h1>
-              <span className="price">مبلغ کل:‌120.000.000 تومان</span>
+              <span className="price">
+                مبلغ کل:
+                {new Intl.NumberFormat("fa-IR").format(totalPriceOrder)} تومان
+              </span>
             </div>
             <button
               className="btn-save"
@@ -229,21 +292,52 @@ const Root = () => {
             </button>
           </div>
           <ul className="list">
-            {subItems.map((subItem) => (
+            {orders.map((order) => (
               <li className="list-item">
                 <img
                   className="list-image"
                   src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
                 />
-                <h1 className="list-title">نام محصول</h1>
-                <p className="list-desc">جمع کل : 130.000.000 تومان</p>
+                <h1 className="list-title">{order.title}</h1>
+                <p className="list-desc">
+                  جمع کل : {new Intl.NumberFormat("fa-IR").format(order.price)}{" "}
+                  تومان
+                </p>
                 <div className="list-order">
-                  <div className="list-btn list-btn--add">
+                  <div
+                    className="list-btn list-btn--add"
+                    onClick={() => {
+                      setOrders((prev) => {
+                        const state = [...prev];
+                        const index = state.findIndex((e) => e.id === order.id);
+                        if (index === -1) return state;
+                        state[index].count = state[index].count + 1;
+                        return state;
+                      });
+                    }}
+                  >
                     <AiOutlinePlus />
                   </div>
 
-                  <input type="text" className="list-input" />
-                  <div className="list-btn list-btn--minus">
+                  <input
+                    type="text"
+                    className="list-input"
+                    value={order.count}
+                    readOnly
+                  />
+                  <div
+                    className="list-btn list-btn--minus"
+                    onClick={() => {
+                      setOrders((prev) => {
+                        const state = [...prev];
+                        const index = state.findIndex((e) => e.id === order.id);
+                        if (index === -1) return state;
+                        if (state[index].count === 1) state.splice(index, 1);
+                        else state[index].count = state[index].count - 1;
+                        return state;
+                      });
+                    }}
+                  >
                     <AiOutlineMinus />
                   </div>
                 </div>
@@ -340,9 +434,10 @@ const Group = styled("div")(() => ({
   paddingBlock: "30px 10px",
   flexWrap: "nowrap",
   display: "flex",
-  justifyContent: "center",
+  justifyContent: "flex-start",
   alignItems: "center",
   overflowX: "auto",
+  borderBottom: "1px solid #eee",
   "@media(max-width: 1200px)": {
     width: "95%",
   },
@@ -552,6 +647,7 @@ const Products = styled("div")(() => ({
     paddingBlock: "20px",
     flex: 1,
     overflowY: "auto",
+    width: "100%",
   },
 
   "& .product": {
