@@ -6,6 +6,9 @@ import {
   AiOutlinePlus,
   AiOutlineMinus,
 } from "react-icons/ai";
+import Modal from "../components/modal";
+import AuthorizedForm from "../components/authorizedForm";
+import ConfirmOrderForm from "../components/confirmOrderForm";
 
 const items = [
   { name: "همه", id: 1 },
@@ -108,6 +111,8 @@ const Root = () => {
   const [activeItem, setActiveItem] = useState(1);
   const onChangeActiveItem = (data) => setActiveItem(data);
   const [openOrderInMobile, setOpenOrderInMobile] = useState(false);
+  const [authorizedModalStatus, setAuthorizedModalStatus] = useState(false);
+  const [confirmModalStatus, setConfirmModalStatus] = useState(false);
   const orderRef = useRef(null);
 
   useEffect(() => {
@@ -129,6 +134,23 @@ const Root = () => {
 
   return (
     <Container>
+      <Modal
+        onClose={() => setAuthorizedModalStatus(false)}
+        title="ورود به حساب کاربری"
+        isOpen={authorizedModalStatus}
+      >
+        <AuthorizedForm
+          setAuthorizedModalStatus={setAuthorizedModalStatus}
+          setConfirmModalStatus={setConfirmModalStatus}
+        />
+      </Modal>
+      <Modal
+        isOpen={confirmModalStatus}
+        onClose={() => setConfirmModalStatus(false)}
+        title="لیست سفارشات نهایی"
+      >
+        <ConfirmOrderForm />
+      </Modal>
       <GlobalStyle />
       <Header>
         <ul className="list">
@@ -193,8 +215,18 @@ const Root = () => {
         ></div>
         <Order ref={orderRef} isOpenInMobile={openOrderInMobile}>
           <div className="header">
-            <h1 className="title">سفارشات</h1>
-            <button className="btn-save">تایید سفارشات</button>
+            <div className="header-content">
+              <h1 className="title">سفارشات</h1>
+              <span className="price">مبلغ کل:‌120.000.000 تومان</span>
+            </div>
+            <button
+              className="btn-save"
+              onClick={() => {
+                setAuthorizedModalStatus(true);
+              }}
+            >
+              تایید سفارشات
+            </button>
           </div>
           <ul className="list">
             {subItems.map((subItem) => (
@@ -206,12 +238,12 @@ const Root = () => {
                 <h1 className="list-title">نام محصول</h1>
                 <p className="list-desc">جمع کل : 130.000.000 تومان</p>
                 <div className="list-order">
-                  <div className="list-btn list-btn--minus">
+                  <div className="list-btn list-btn--add">
                     <AiOutlinePlus />
                   </div>
 
                   <input type="text" className="list-input" />
-                  <div className="list-btn list-btn--add">
+                  <div className="list-btn list-btn--minus">
                     <AiOutlineMinus />
                   </div>
                 </div>
@@ -362,6 +394,10 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
   paddingBottom: "50px",
   transition: "0.5s all",
 
+  "& .price": {
+    fontSize: "11px",
+  },
+
   "@media(max-width: 1200px)": {
     position: "absolute",
     height: "100%",
@@ -379,9 +415,15 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     paddingInline: "20px",
     height: "40px",
     border: "none",
-    background: "#0268ff",
+    background: "#00c900",
     color: "#fff",
     borderRadius: "5px",
+    cursor: "pointer",
+
+    "@media(max-width: 400px)": {
+      width: "100%",
+      marginTop: "10px",
+    },
   },
 
   "& .header": {
@@ -391,6 +433,12 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: "15px",
+    "@media(max-width: 400px)": {
+      flexDirection: "column",
+      "&-content": {
+        width: "100%",
+      },
+    },
   },
 
   "& .title": {
@@ -436,12 +484,17 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       justifyContent: "center",
       alignItems: "center",
       cursor: "pointer",
+      "& *": {
+        fill: "#fff",
+      },
     },
     "&-btn--minus": {
-      borderLeft: "1px solid #eee",
+      background: "#ff4848",
+      borderRight: "1px solid #eee",
     },
     "&-btn--add": {
-      borderRight: "1px solid #eee",
+      background: "#00c900",
+      borderLeft: "1px solid #eee",
     },
     "&-input": {
       height: "100%",
@@ -454,7 +507,10 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
 
 const Products = styled("div")(() => ({
   width: "80%",
-  overflowY: "auto",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "flex-start",
 
   "@media(max-width: 1200px)": {
     width: "100%",
@@ -467,6 +523,7 @@ const Products = styled("div")(() => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "100%",
 
     "&-text": {
       fontSize: "18px",
@@ -493,6 +550,8 @@ const Products = styled("div")(() => ({
     flexWrap: "wrap",
     alignItems: "flex-start",
     paddingBlock: "20px",
+    flex: 1,
+    overflowY: "auto",
   },
 
   "& .product": {

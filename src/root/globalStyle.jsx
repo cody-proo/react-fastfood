@@ -1,8 +1,13 @@
 import { createGlobalStyle } from "styled-components";
+import iransans from "../assets/fonts/iransans.woff2";
 
 const GlobalStyle = createGlobalStyle(() => ({
+  "@font-face": {
+    src: `url('${iransans}')`,
+    fontFamily: "iransans",
+  },
   body: {
-    fontFamily: "roboto",
+    fontFamily: "iransans",
     direction: "rtl",
     overflowX: "hidden",
   },
