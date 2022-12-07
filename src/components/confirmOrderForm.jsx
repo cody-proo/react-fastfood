@@ -122,10 +122,6 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
               )}
               className="order-img"
             />
-            {/* <img
-              className="order-img"
-              src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-            /> */}
             <div className="order-data">
               <h1 className="order-title">{order.title}</h1>
               <p className="order-price">
@@ -362,7 +358,7 @@ const Container = styled("div")(() => ({
     cursor: "pointer",
     "&:disabled": {
       opacity: 0.5,
-      cursor: 'unset'
+      cursor: "unset",
     },
     "&-close": {
       opacity: 0,

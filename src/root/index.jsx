@@ -704,6 +704,7 @@ const Products = styled("div")(() => ({
     width: "18%",
     marginInlineEnd: "25px",
     marginBottom: "20px",
+    height: "180px",
     "@media(max-width: 1400px)": {
       width: "23%",
       marginInlineEnd: "17px",
@@ -730,7 +731,7 @@ const Products = styled("div")(() => ({
     },
 
     "&-img": {
-      height: "150px",
+      height: "80%",
       width: "100%",
       objectFit: "cover",
       borderRadius: "5px",
