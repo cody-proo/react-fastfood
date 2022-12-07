@@ -245,7 +245,7 @@ const Root = () => {
             <ul className="list">
               {orders.map((order) => (
                 <li className="list-item">
-                  <img
+                  <Image
                     className="list-image"
                     src={"https://test.gymsoft.ir/media".concat(
                       "/",
