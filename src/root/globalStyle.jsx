@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle(() => ({
     fontFamily: "iransans",
     direction: "rtl",
     overflowX: "hidden",
-    backgroundImage: `url('${bgBody}')`
+    // backgroundImage: `url('${bgBody}')`
   },
   "*": {
     listStyle: "none",

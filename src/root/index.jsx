@@ -91,7 +91,7 @@ const Root = () => {
           {shopLoading ? (
             <Skeleton
               count={1}
-              baseColor="#888"
+              baseColor="#eee"
               highlightColor="#ddd"
               containerClassName="header-loading"
               height="100%"
@@ -361,7 +361,7 @@ const Header = styled("header")(() => ({
   width: "90%",
   paddingBlock: "10px",
   marginInline: "auto",
-  borderBottom: "2px solid #888",
+  borderBottom: "2px solid #eee",
   "@media(max-width: 1200px)": {
     width: "95%",
   },
@@ -418,7 +418,7 @@ const Group = styled("div")(() => ({
   justifyContent: "flex-start",
   alignItems: "center",
   overflowX: "auto",
-  borderBottom: "1px solid #888",
+  borderBottom: "1px solid #eee",
   "@media(max-width: 1200px)": {
     width: "95%",
   },
@@ -479,7 +479,7 @@ const DetailContainer = styled("div")(() => ({
 
 const Order = styled("div")(({ isOpenInMobile }) => ({
   width: "20%",
-  borderRight: "1px solid #888",
+  borderRight: "1px solid #eee",
   overflow: "hidden",
   height: "100%",
   paddingBottom: "50px",
@@ -530,7 +530,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
   },
 
   "& .header": {
-    borderBottom: "1px solid #888",
+    borderBottom: "1px solid #eee",
     paddingInline: "10px",
     display: "flex",
     justifyContent: "space-between",
@@ -560,7 +560,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       justifyContent: "space-between",
       alignItems: "center",
       texrAlign: "center",
-      borderBottom: "1px solid #888",
+      borderBottom: "1px solid #eee",
       paddingBottom: "10px",
       div: {
         textAlign: "center",
@@ -595,7 +595,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       justifyContent: "center",
       alignItems: "center",
       marginInline: "auto",
-      border: "1px solid #888",
+      border: "1px solid #eee",
     },
     "&-btn": {
       height: "100%",
@@ -610,11 +610,11 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     },
     "&-btn--minus": {
       background: "#ff4848",
-      borderRight: "1px solid #888",
+      borderRight: "1px solid #eee",
     },
     "&-btn--add": {
       background: "#00c900",
-      borderLeft: "1px solid #888",
+      borderLeft: "1px solid #eee",
     },
     "&-input": {
       height: "100%",
@@ -646,7 +646,7 @@ const Products = styled("div")(() => ({
 
   "& .header": {
     paddingBottom: "15px",
-    borderBottom: "1px solid #888",
+    borderBottom: "1px solid #eee",
     paddingInline: "10px",
     display: "flex",
     justifyContent: "space-between",
@@ -704,7 +704,6 @@ const Products = styled("div")(() => ({
     width: "18%",
     marginInlineEnd: "25px",
     marginBottom: "20px",
-    height: "180px",
     "@media(max-width: 1400px)": {
       width: "23%",
       marginInlineEnd: "17px",
@@ -731,7 +730,7 @@ const Products = styled("div")(() => ({
     },
 
     "&-img": {
-      height: "80%",
+      height: "150px",
       width: "100%",
       objectFit: "cover",
       borderRadius: "5px",
