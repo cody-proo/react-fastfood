@@ -570,7 +570,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       },
       "&-item": {
         paddingTop: "10px",
-        borderBottom: "unset", 
+        borderBottom: "unset",     
       },
     },
     "&-image": {
