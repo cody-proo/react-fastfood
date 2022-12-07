@@ -91,7 +91,7 @@ const Root = () => {
           {shopLoading ? (
             <Skeleton
               count={1}
-              baseColor="#eee"
+              baseColor="#888"
               highlightColor="#ddd"
               containerClassName="header-loading"
               height="100%"
@@ -361,7 +361,7 @@ const Header = styled("header")(() => ({
   width: "90%",
   paddingBlock: "10px",
   marginInline: "auto",
-  borderBottom: "2px solid #eee",
+  borderBottom: "2px solid #888",
   "@media(max-width: 1200px)": {
     width: "95%",
   },
@@ -418,7 +418,7 @@ const Group = styled("div")(() => ({
   justifyContent: "flex-start",
   alignItems: "center",
   overflowX: "auto",
-  borderBottom: "1px solid #eee",
+  borderBottom: "1px solid #888",
   "@media(max-width: 1200px)": {
     width: "95%",
   },
@@ -479,7 +479,7 @@ const DetailContainer = styled("div")(() => ({
 
 const Order = styled("div")(({ isOpenInMobile }) => ({
   width: "20%",
-  borderRight: "1px solid #eee",
+  borderRight: "1px solid #888",
   overflow: "hidden",
   height: "100%",
   paddingBottom: "50px",
@@ -530,7 +530,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
   },
 
   "& .header": {
-    borderBottom: "1px solid #eee",
+    borderBottom: "1px solid #888",
     paddingInline: "10px",
     display: "flex",
     justifyContent: "space-between",
@@ -560,7 +560,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       justifyContent: "space-between",
       alignItems: "center",
       texrAlign: "center",
-      borderBottom: "1px solid #eee",
+      borderBottom: "1px solid #888",
       paddingBottom: "10px",
       div: {
         textAlign: "center",
@@ -595,7 +595,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       justifyContent: "center",
       alignItems: "center",
       marginInline: "auto",
-      border: "1px solid #eee",
+      border: "1px solid #888",
     },
     "&-btn": {
       height: "100%",
@@ -610,11 +610,11 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     },
     "&-btn--minus": {
       background: "#ff4848",
-      borderRight: "1px solid #eee",
+      borderRight: "1px solid #888",
     },
     "&-btn--add": {
       background: "#00c900",
-      borderLeft: "1px solid #eee",
+      borderLeft: "1px solid #888",
     },
     "&-input": {
       height: "100%",
@@ -646,7 +646,7 @@ const Products = styled("div")(() => ({
 
   "& .header": {
     paddingBottom: "15px",
-    borderBottom: "1px solid #eee",
+    borderBottom: "1px solid #888",
     paddingInline: "10px",
     display: "flex",
     justifyContent: "space-between",
