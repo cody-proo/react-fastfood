@@ -13,6 +13,7 @@ import { useQuery } from "react-query";
 import { getCategory, getProduct, getShop } from "../services";
 import Skeleton from "react-loading-skeleton";
 import { BiShoppingBag } from "react-icons/bi";
+import Image from "../components/Img";
 
 const Root = () => {
   const [activeItem, setActiveItem] = useState(0);
@@ -136,9 +137,14 @@ const Root = () => {
                 className="group-item"
                 key={category.id + "-" + category.title}
               >
-                <img
+                <Image
                   className="group-image"
-                  src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
+                  src={"https://test.gymsoft.ir/media".concat(
+                    "/",
+                    category?.image?.name,
+                    "?w=600&h=400"
+                  )}
+                  iconSize={30}
                 />
                 <div className="group-text">{category.title}</div>
               </div>
@@ -172,14 +178,13 @@ const Root = () => {
             ) : (
               productData?.map((product) => (
                 <div className="product" key={product.id + "-" + product.title}>
-                  <img
+                  <Image
                     className="product-img"
                     src={"https://test.gymsoft.ir/media".concat(
                       "/",
                       product?.image?.name,
                       "?w=600&h=400"
                     )}
-                    alt=""
                   />
                   <h3 className="product-title">
                     <span>{product.title}</span>
@@ -251,27 +256,20 @@ const Root = () => {
                   <h1 className="list-title">{order.title}</h1>
                   <p className="list-desc">
                     <div className="list-summary">
-                      <div>جمع کل</div>
-                      <div>تعداد</div>
                       <div>قیمت واحد</div>
+                      <div>تعداد</div>
+                      <div>جمع کل</div>
                     </div>
                     <div className="list-summary list-summary-item">
+                      <div>
+                        {new Intl.NumberFormat("fa-IR").format(order.price)}
+                      </div>
+                      <div>{order.count}</div>
                       <div>
                         {new Intl.NumberFormat("fa-IR").format(
                           order.price * order.count
                         )}
                       </div>
-
-                      <div>{order.count}</div>
-                      <div>
-                        {new Intl.NumberFormat("fa-IR").format(order.price)}
-                      </div>
-                      {/* جمع کل :{" "}
-                    {new Intl.NumberFormat("fa-IR").format(order.price)} +{" "}
-                    {order.count} ={" "}
-                    {new Intl.NumberFormat("fa-IR").format(
-                      order.price * order.count
-                    )} */}
                     </div>
                   </p>
                   <div className="list-order">
@@ -454,12 +452,12 @@ const Group = styled("div")(() => ({
       width: "130px",
     },
     "&-image": {
-      height: "70%",
+      height: "60%",
       width: "100%",
       borderRadius: "5px",
     },
     "&-text": {
-      height: "30%",
+      height: "50px",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -570,14 +568,14 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
       },
       "&-item": {
         paddingTop: "10px",
-        borderBottom: "unset",     
+        borderBottom: "unset",
       },
     },
     "&-image": {
       height: "150px",
       width: "100%",
       borderRadius: "5px",
-      objectFit: 'cover'
+      objectFit: "cover",
     },
     "&-title": {
       fontSize: "16px",
@@ -743,10 +741,10 @@ const Products = styled("div")(() => ({
 
     "&-title": {
       fontSize: "16px",
-      marginBlock: "10px",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      height: "40px",
     },
 
     "&-bucket": {

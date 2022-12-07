@@ -10,6 +10,7 @@ import {
 import moment from "jalali-moment";
 import { toast } from "react-toastify";
 import ReactLoading from "react-loading";
+import Image from "./Img";
 
 const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
   const [openTransaction, setOpenTransaction] = useState(false);
@@ -95,25 +96,36 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
         </div>
       )}
       <div className="profile">
-        <img
-          className="profile-user"
-          src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-        />
+        {user && (
+          <Image
+            src={"https://test.gymsoft.ir/media".concat(
+              "/",
+              user?.profile?.name,
+              "?w=600&h=400"
+            )}
+            className="profile-user"
+          />
+        )}
+
         <h1 className="profile-username">
           {user?.firstName} {user?.lastName}
         </h1>
-        <p className="profile-text">
-          موجودی کیف پول :{" "}
-          {new Intl.NumberFormat("fa-IR").format(user?.credit || 0)} تومان
-        </p>
       </div>
       <div className={orderClass}>
         {orders.map((order) => (
           <div className="order-item">
-            <img
+            <Image
+              src={"https://test.gymsoft.ir/media".concat(
+                "/",
+                order?.image?.name,
+                "?w=600&h=400"
+              )}
+              className="order-img"
+            />
+            {/* <img
               className="order-img"
               src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-            />
+            /> */}
             <div className="order-data">
               <h1 className="order-title">{order.title}</h1>
               <p className="order-price">
@@ -211,13 +223,40 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
         </div>
       </div>
       <div className={detailContainerClass}>
-        <div className={detailClass}>
-          <span>جمع کل</span>
-          <span>
-            {new Intl.NumberFormat("fa-IR").format(totalPriceOrder)} تومان
-          </span>
+        <div>
+          <div className={detailClass}>
+            <span>جمع کل</span>
+            <span>
+              {new Intl.NumberFormat("fa-IR").format(totalPriceOrder)} تومان
+            </span>
+          </div>
+          <div className={detailClass}>
+            <span>موجودی کیف پول</span>
+            <span>
+              {new Intl.NumberFormat("fa-IR").format(user?.credit || 0)} تومان
+            </span>
+          </div>
+          <div
+            className={`${detailClass}`}
+            style={{
+              color:
+                (user?.credit || 0) - totalPriceOrder < 0 ? "red" : "green",
+            }}
+          >
+            <span>مانده</span>
+            <span>
+              {new Intl.NumberFormat("fa-IR").format(
+                Math.abs((user?.credit || 0) - totalPriceOrder)
+              )}{" "}
+              تومان
+            </span>
+          </div>
         </div>
-        <button onClick={() => setOpenTransaction(true)} className={payClass}>
+        <button
+          disabled={(user?.credit || 0) - totalPriceOrder < 0}
+          onClick={() => setOpenTransaction(true)}
+          className={payClass}
+        >
           پرداخت نهایی
         </button>
       </div>
@@ -253,6 +292,7 @@ const Container = styled("div")(() => ({
       height: "80px",
       width: "80px",
       borderRadius: "50%",
+      marginInline: "auto",
     },
     "&-username": {
       fontSize: "17px",
@@ -320,6 +360,10 @@ const Container = styled("div")(() => ({
     color: "#fff",
     borderRadius: "4px",
     cursor: "pointer",
+    "&:disabled": {
+      opacity: 0.5,
+      cursor: 'unset'
+    },
     "&-close": {
       opacity: 0,
       height: 0,
@@ -336,10 +380,12 @@ const Container = styled("div")(() => ({
     justifyContent: "space-between",
     alignItems: "center",
     fontWeight: "bold",
-    marginBottom: "20px",
     fontSize: "14px",
     transition: "0.5s all",
     overflow: "hidden",
+    "&:last-child": {
+      marginBottom: "20px",
+    },
     "&-close": {
       height: 0,
     },
