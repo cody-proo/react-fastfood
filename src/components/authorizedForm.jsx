@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useMutation } from "react-query";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import { loginService } from "../services";
+import ReactLoading from "react-loading";
 
 const AuthorizedForm = ({
   setConfirmModalStatus,
@@ -28,18 +30,23 @@ const AuthorizedForm = ({
       setConfirmModalStatus(true);
       setSubmit(false);
     },
-    onError: (data) => {
+    onError: (error) => {
       setSubmit(false);
-      console.log(data);
+      const errorMsg = error.response.data.message;
+      if (errorMsg === "Invalid username or password") {
+        toast("شماره تلفن یا گذرواژه نادرست میباشد", { type: "error" });
+      } else if (errorMsg === "User does not exist") {
+        toast("کاربری با این شماره تلفن وجود ندارد", { type: "error" });
+      } else {
+        toast(Array.isArray(errorMsg) ? errorMsg.join(" - ") : errorMsg, {
+          type: "error",
+        });
+      }
     },
   });
 
   const isValidMobileNumber = () => {
     return !!(username && username.match(/^(\+98?)?{?(0?9[0-9]{9,9}}?)$/));
-  };
-
-  const isPasswordValid = () => {
-    return !!password;
   };
 
   const handleUsername = (e) => setUsername(e.currentTarget.value);
@@ -48,9 +55,10 @@ const AuthorizedForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmit(true);
-    console.log(isValidMobileNumber(), isPasswordValid());
-    if (isValidMobileNumber() && isPasswordValid()) {
+    if (isValidMobileNumber()) {
       await mutate({ username, password });
+    } else {
+      setSubmit(false);
     }
   };
 
@@ -60,15 +68,13 @@ const AuthorizedForm = ({
         <label className="input-label">شماره موبایل</label>
         <input
           className="input"
-          type="text"
+          type="phone"
           placeholder="شماره تلفن خود را وارد کنید"
           value={username}
           onChange={handleUsername}
         />
         <span className="input-error">
-          {isSubmit && !isValidMobileNumber()
-            ? "شماره موبایل خود را درست وارد کنید"
-            : ""}
+          {!isValidMobileNumber() ? "شماره موبایل خود را درست وارد کنید" : ""}
         </span>
       </div>
       <div className="input-group">
@@ -80,12 +86,20 @@ const AuthorizedForm = ({
           value={password}
           onChange={handlePassword}
         />
-        <span className="input-error">
-          {isSubmit && !isPasswordValid() ? "گذرواژه خود را وارد کنید" : ""}
-        </span>
       </div>
-      <button disabled={isSubmit} className="btn" type="submit">
-        {isLoading ? "درحال پردازش" : "ورود"}
+      <button
+        {...(isSubmit ? { disabled: true } : {})}
+        disabled={isSubmit}
+        className="btn"
+        type="submit"
+      >
+        {isLoading ? (
+          <div className="loading">
+            <ReactLoading height="20px" width="20px" type="spin" />
+          </div>
+        ) : (
+          "ورود"
+        )}
       </button>
     </Form>
   );
@@ -94,6 +108,13 @@ const AuthorizedForm = ({
 export default AuthorizedForm;
 
 const Form = styled("form")(() => ({
+  "& .loading": {
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   ".input": {
     height: "40px",
     marginTop: "10px",

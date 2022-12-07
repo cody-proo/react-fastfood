@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import GlobalStyle from "./globalStyle";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import {
+  AiOutlinePlus,
+  AiOutlineMinus,
+  AiOutlineShoppingCart,
+} from "react-icons/ai";
 import Modal from "../components/modal";
 import AuthorizedForm from "../components/authorizedForm";
 import ConfirmOrderForm from "../components/confirmOrderForm";
 import { useQuery } from "react-query";
 import { getCategory, getProduct, getShop } from "../services";
+import Skeleton from "react-loading-skeleton";
+import { BiShoppingBag } from "react-icons/bi";
 
 const Root = () => {
   const [activeItem, setActiveItem] = useState(0);
@@ -36,7 +42,7 @@ const Root = () => {
       if (
         !orderRef.current.contains(e.target) &&
         openOrderInMobile &&
-        e.target.innerText !== "سفارشات"
+        e.target.classList[0] !== "header-btn"
       ) {
         setOpenOrderInMobile(false);
       }
@@ -81,45 +87,64 @@ const Root = () => {
       <GlobalStyle />
       <Header>
         <ul className="list">
-          {shopLoading
-            ? "درحال دریافت اطلاعات"
-            : [{ title: "همه", id: 0 }, ...(shopData || [])]?.map((item) => (
-                <li
-                  key={item.name + "-" + item.id}
-                  onClick={onChangeActiveItem.bind(null, item.id)}
-                  className={`item ${
-                    activeItem === item.id ? "item--active" : ""
-                  }`}
+          {shopLoading ? (
+            <Skeleton
+              count={1}
+              baseColor="#eee"
+              highlightColor="#ddd"
+              containerClassName="header-loading"
+              height="100%"
+            />
+          ) : (
+            [{ title: "همه", id: 0 }, ...(shopData || [])]?.map((item) => (
+              <li
+                key={item.name + "-" + item.id}
+                onClick={onChangeActiveItem.bind(null, item.id)}
+                className={`item ${
+                  activeItem === item.id ? "item--active" : ""
+                }`}
+              >
+                <a
+                  className="item-link"
+                  onClick={(e) => e.preventDefault()}
+                  href={item.title}
                 >
-                  <a
-                    className="item-link"
-                    onClick={(e) => e.preventDefault()}
-                    href={item.title}
-                  >
-                    {item.title}
-                  </a>
-                </li>
-              ))}
+                  {item.title}
+                </a>
+              </li>
+            ))
+          )}
         </ul>
       </Header>
       <Group className="group">
-        {categoryLoading
-          ? "درحال دریافت اطلاعات"
-          : [{ id: 0, title: "همه" }, ...(categoryData || [])]?.map(
-              (category) => (
-                <div
-                  onClick={() => setActiveCategory(category.id)}
-                  className="group-item"
-                  key={category.id + "-" + category.title}
-                >
-                  <img
-                    className="group-image"
-                    src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-                  />
-                  <div className="group-text">{category.title}</div>
-                </div>
-              )
-            )}
+        {categoryLoading ? (
+          <div className="group-loading">
+            <Skeleton
+              containerClassName="group-loading-container"
+              count={4}
+              height="100%"
+              width={200}
+              highlightColor="#ddd"
+              baseColor="#eee"
+            />
+          </div>
+        ) : (
+          [{ id: 0, title: "همه" }, ...(categoryData || [])]?.map(
+            (category) => (
+              <div
+                onClick={() => setActiveCategory(category.id)}
+                className="group-item"
+                key={category.id + "-" + category.title}
+              >
+                <img
+                  className="group-image"
+                  src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
+                />
+                <div className="group-text">{category.title}</div>
+              </div>
+            )
+          )
+        )}
       </Group>
       <DetailContainer>
         <Products>
@@ -127,50 +152,62 @@ const Root = () => {
             <h1 className="header-text">محصولات</h1>
             <button
               className="header-btn"
-              onClick={() => setOpenOrderInMobile((prev) => !prev)}
+              onClick={() => {
+                setOpenOrderInMobile((prev) => !prev);
+              }}
             >
+              <div className="header-badge">
+                {orders?.reduce((acc, order) => acc + order.count, 0)}
+              </div>
               سفارشات
             </button>
           </div>
           <div className="list">
-            {productLoading
-              ? "درحال دریافت اطلاعات"
-              : productData?.map((product) => (
-                  <div
-                    className="product"
-                    key={product.id + "-" + product.title}
+            {productLoading ? (
+              <Skeleton
+                containerClassName="loading"
+                height="100%"
+                width="100%"
+              />
+            ) : (
+              productData?.map((product) => (
+                <div className="product" key={product.id + "-" + product.title}>
+                  <img
+                    className="product-img"
+                    src={"https://test.gymsoft.ir/media".concat(
+                      "/",
+                      product?.image?.name,
+                      "?w=600&h=400"
+                    )}
+                    alt=""
+                  />
+                  <h3 className="product-title">
+                    <span>{product.title}</span>
+                    <span>
+                      {new Intl.NumberFormat("fa-IR").format(product.price)}{" "}
+                      تومان
+                    </span>
+                  </h3>
+                  <button
+                    onClick={() =>
+                      setOrders((prev) => {
+                        const state = [...prev];
+                        const index = prev?.findIndex(
+                          (order) => order.id === product.id
+                        );
+                        if (index === -1)
+                          return [{ ...product, count: 1 }, ...state];
+                        state[index].count = state[index].count + 1;
+                        return state;
+                      })
+                    }
+                    className="product-bucket"
                   >
-                    <img
-                      className="product-img"
-                      src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-                      alt=""
-                    />
-                    <h3 className="product-title">
-                      <span>{product.title}</span>
-                      <span>
-                        {new Intl.NumberFormat("fa-IR").format(product.price)}{" "}
-                        تومان
-                      </span>
-                    </h3>
-                    <button
-                      onClick={() =>
-                        setOrders((prev) => {
-                          const state = [...prev];
-                          const index = prev?.findIndex(
-                            (order) => order.id === product.id
-                          );
-                          if (index === -1)
-                            return [{ ...product, count: 1 }, ...state];
-                          state[index].count = state[index].count + 1;
-                          return state;
-                        })
-                      }
-                      className="product-bucket"
-                    >
-                      افزودن به سبد خرید
-                    </button>
-                  </div>
-                ))}
+                    افزودن به سبد خرید
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </Products>
         <div
@@ -181,7 +218,7 @@ const Root = () => {
             <div className="header-content">
               <h1 className="title">سفارشات</h1>
               <span className="price">
-                مبلغ کل:
+                قابل پرداخت:
                 {new Intl.NumberFormat("fa-IR").format(totalPriceOrder)} تومان
               </span>
             </div>
@@ -194,59 +231,96 @@ const Root = () => {
               تایید سفارشات
             </button>
           </div>
-          <ul className="list">
-            {orders.map((order) => (
-              <li className="list-item">
-                <img
-                  className="list-image"
-                  src="https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg"
-                />
-                <h1 className="list-title">{order.title}</h1>
-                <p className="list-desc">
-                  جمع کل : {new Intl.NumberFormat("fa-IR").format(order.price)}{" "}
-                  تومان
-                </p>
-                <div className="list-order">
-                  <div
-                    className="list-btn list-btn--add"
-                    onClick={() => {
-                      setOrders((prev) => {
-                        const state = [...prev];
-                        const index = state.findIndex((e) => e.id === order.id);
-                        if (index === -1) return state;
-                        state[index].count = state[index].count + 1;
-                        return state;
-                      });
-                    }}
-                  >
-                    <AiOutlinePlus />
-                  </div>
-
-                  <input
-                    type="text"
-                    className="list-input"
-                    value={order.count}
-                    readOnly
+          {orders.length === 0 ? (
+            <div className="order-empty">
+              <BiShoppingBag fontSize={50} />
+              <h1 className="order-title">سفارشی موجود نیست</h1>
+            </div>
+          ) : (
+            <ul className="list">
+              {orders.map((order) => (
+                <li className="list-item">
+                  <img
+                    className="list-image"
+                    src={"https://test.gymsoft.ir/media".concat(
+                      "/",
+                      order?.image?.name,
+                      "?w=600&h=400"
+                    )}
                   />
-                  <div
-                    className="list-btn list-btn--minus"
-                    onClick={() => {
-                      setOrders((prev) => {
-                        const state = [...prev];
-                        const index = state.findIndex((e) => e.id === order.id);
-                        if (index === -1) return state;
-                        if (state[index].count === 1) state.splice(index, 1);
-                        else state[index].count = state[index].count - 1;
-                        return state;
-                      });
-                    }}
-                  >
-                    <AiOutlineMinus />
+                  <h1 className="list-title">{order.title}</h1>
+                  <p className="list-desc">
+                    <div className="list-summary">
+                      <div>جمع کل</div>
+                      <div>تعداد</div>
+                      <div>قیمت واحد</div>
+                    </div>
+                    <div className="list-summary list-summary-item">
+                      <div>
+                        {new Intl.NumberFormat("fa-IR").format(
+                          order.price * order.count
+                        )}
+                      </div>
+
+                      <div>{order.count}</div>
+                      <div>
+                        {new Intl.NumberFormat("fa-IR").format(order.price)}
+                      </div>
+                      {/* جمع کل :{" "}
+                    {new Intl.NumberFormat("fa-IR").format(order.price)} +{" "}
+                    {order.count} ={" "}
+                    {new Intl.NumberFormat("fa-IR").format(
+                      order.price * order.count
+                    )} */}
+                    </div>
+                  </p>
+                  <div className="list-order">
+                    <div
+                      className="list-btn list-btn--add"
+                      onClick={() => {
+                        setOrders((prev) => {
+                          const state = [...prev];
+                          const index = state.findIndex(
+                            (e) => e.id === order.id
+                          );
+                          if (index === -1) return state;
+                          state[index].count = state[index].count + 1;
+                          return state;
+                        });
+                      }}
+                    >
+                      <AiOutlinePlus />
+                    </div>
+
+                    <input
+                      type="text"
+                      className="list-input"
+                      value={order.count}
+                      readOnly
+                    />
+                    <div
+                      className="list-btn list-btn--minus"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setOrders((prev) => {
+                          const state = [...prev];
+                          const index = state.findIndex(
+                            (e) => e.id === order.id
+                          );
+                          if (index === -1) return state;
+                          if (state[index].count === 1) state.splice(index, 1);
+                          else state[index].count = state[index].count - 1;
+                          return state;
+                        });
+                      }}
+                    >
+                      <AiOutlineMinus />
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          )}
         </Order>
       </DetailContainer>
     </Container>
@@ -292,6 +366,12 @@ const Header = styled("header")(() => ({
   borderBottom: "2px solid #eee",
   "@media(max-width: 1200px)": {
     width: "95%",
+  },
+
+  ".header-loading": {
+    width: "100%",
+    height: "100%",
+    height: "40px",
   },
 
   "& .list": {
@@ -345,6 +425,21 @@ const Group = styled("div")(() => ({
     width: "95%",
   },
   ".group": {
+    "&-loading": {
+      height: "100px",
+      width: "100%",
+      marginBottom: "15px",
+      "&-container": {
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+        height: "100%",
+        ".react-loading-skeleton": {
+          marginInlineEnd: "20px",
+        },
+      },
+    },
     "&-item": {
       flex: "none",
       marginInlineEnd: "20px",
@@ -396,6 +491,17 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     fontSize: "11px",
   },
 
+  "& .order-empty": {
+    width: "90%",
+    marginRight: "auto",
+    textAlign: "center",
+    paddingBlock: "30px",
+  },
+
+  "& .order-title": {
+    fontSize: "16px",
+  },
+
   "@media(max-width: 1200px)": {
     position: "absolute",
     height: "100%",
@@ -417,6 +523,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     color: "#fff",
     borderRadius: "5px",
     cursor: "pointer",
+    fontFamily: "iransans",
 
     "@media(max-width: 400px)": {
       width: "100%",
@@ -450,10 +557,27 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     overflowY: "auto",
     paddingBlock: "10px 30px",
     paddingLeft: "10px",
+    "&-summary": {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      texrAlign: "center",
+      borderBottom: "1px solid #eee",
+      paddingBottom: "10px",
+      div: {
+        textAlign: "center",
+        width: "30%",
+      },
+      "&-item": {
+        paddingTop: "10px",
+        borderBottom: "unset",
+      },
+    },
     "&-image": {
       height: "150px",
       width: "100%",
       borderRadius: "5px",
+      objectFit: 'cover'
     },
     "&-title": {
       fontSize: "16px",
@@ -514,6 +638,14 @@ const Products = styled("div")(() => ({
     width: "100%",
   },
 
+  "& .loading": {
+    height: "200px",
+    width: "30%",
+    "@media(max-width: 500px)": {
+      width: "100%",
+    },
+  },
+
   "& .header": {
     paddingBottom: "15px",
     borderBottom: "1px solid #eee",
@@ -523,6 +655,21 @@ const Products = styled("div")(() => ({
     alignItems: "center",
     width: "100%",
 
+    "&-badge": {
+      position: "absolute",
+      top: -10,
+      left: -10,
+      height: "30px",
+      width: "30px",
+      background: "#ff4848",
+      color: "#fff",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: "100%",
+      fontFamily: "iransans",
+    },
+
     "&-text": {
       fontSize: "18px",
     },
@@ -530,11 +677,13 @@ const Products = styled("div")(() => ({
     "&-btn": {
       height: "40px",
       width: "120px",
-      background: "#5599ff",
-      color: "#fff",
       border: "none",
       borderRadius: "5px",
       cursor: "pointer",
+      background: "#00c900",
+      color: "#fff",
+      fontFamily: "iransans",
+      position: "relative",
 
       "@media(min-width: 1200px)": {
         display: "none",
@@ -585,6 +734,7 @@ const Products = styled("div")(() => ({
     "&-img": {
       height: "150px",
       width: "100%",
+      objectFit: "cover",
       borderRadius: "5px",
       "@media(max-width: 570px)": {
         height: "200px",

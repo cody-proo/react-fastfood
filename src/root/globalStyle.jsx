@@ -14,11 +14,13 @@ const GlobalStyle = createGlobalStyle(() => ({
   "*": {
     listStyle: "none",
     textDecoration: "none",
-    color: "#444",
     margin: 0,
     padding: 0,
     boxSizing: "border-box",
     outline: "none",
+  },
+  ".Toastify__toast--error": {
+    color: "#fff!important",
   },
 }));
 

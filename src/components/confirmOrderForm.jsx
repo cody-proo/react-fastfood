@@ -8,9 +8,12 @@ import {
   setTransactionService,
 } from "../services";
 import moment from "jalali-moment";
+import { toast } from "react-toastify";
+import ReactLoading from "react-loading";
 
 const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
   const [openTransaction, setOpenTransaction] = useState(false);
+  const [isProcess, setProcess] = useState(false);
   const transactionClass = openTransaction
     ? "transaction"
     : "transaction transaction-close";
@@ -18,32 +21,33 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
   const detailClass = openTransaction ? "detail detail-close" : "detail";
   const payClass = openTransaction ? "pay pay-close" : "pay";
   const detailContainerClass = openTransaction ? "detail-container-close" : "";
-  const [selectedBank, setSelectedBank] = useState("");
-  const [selectedBankAmount, setSelectedBankAmount] = useState("");
-  const [selectedCash, setSelectedCash] = useState("");
-  const [selectedCashAmount, setSelectedCashAmount] = useState("");
-  useEffect(() => {
-    if (totalPriceOrder) {
-      setSelectedBankAmount(totalPriceOrder);
-      setSelectedCashAmount(totalPriceOrder);
-    }
-  }, [totalPriceOrder]);
+  // const [selectedBank, setSelectedBank] = useState("");
+  // const [selectedBankAmount, setSelectedBankAmount] = useState("");
+  // const [selectedCash, setSelectedCash] = useState("");
+  // const [selectedCashAmount, setSelectedCashAmount] = useState("");
+  // useEffect(() => {
+  //   if (totalPriceOrder) {
+  //     setSelectedBankAmount(totalPriceOrder);
+  //     setSelectedCashAmount(totalPriceOrder);
+  //   }
+  // }, [totalPriceOrder]);
 
-  const { isLoading: cashLoading, data: cashData } = useQuery(
-    "cash",
-    () => loadCash(),
-    {
-      enabled: isOpen,
-    }
-  );
+  // const { isLoading: cashLoading, data: cashData } = useQuery(
+  //   "cash",
+  //   () => loadCash(),
+  //   {
+  //     enabled: isOpen,
+  //   }
+  // );
 
-  const { isLoading: bankLoading, data: bankData } = useQuery(
-    "bank",
-    () => loadBank(),
-    { enabled: isOpen }
-  );
+  // const { isLoading: bankLoading, data: bankData } = useQuery(
+  //   "bank",
+  //   () => loadBank(),
+  //   { enabled: isOpen }
+  // );
 
   const exportOrderHandler = (totalAmount) => {
+    setProcess(true);
     exportOrder(
       {
         items: orders.map((order) => ({
@@ -57,17 +61,39 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
         user: user.id,
       },
       totalAmount
-    ).then(() => {
-      alert("با موفقیت ثبت گردید");
-      window.localStorage.removeItem("token");
-      window.localStorage.removeItem("refreshToken");
-      window.localStorage.removeItem("user");
-      window.location.href = "/";
-    });
+    )
+      .then(() => {
+        toast("با موفقیت ثبت گردید", {
+          type: "success",
+        });
+
+        setTimeout(() => {
+          window.localStorage.removeItem("token");
+          window.localStorage.removeItem("refreshToken");
+          window.localStorage.removeItem("user");
+          window.location.href = "/";
+        }, 300);
+      })
+      .catch((error) => {
+        const errorMsg = error.response.data.message;
+        if (errorMsg === "Credit not enough") {
+          toast("موجودی حساب شما کافی نیست", { type: "error" });
+        } else if (errorMsg === "Forbidden resource") {
+          toast("شما دسترسی پرداخت ندارید", { type: "error" });
+        }
+      })
+      .finally(() => {
+        setProcess(false);
+      });
   };
 
   return (
     <Container>
+      {isProcess && (
+        <div className="loading">
+          <ReactLoading type="spin" height="40px" width="40px" color="#000" />
+        </div>
+      )}
       <div className="profile">
         <img
           className="profile-user"
@@ -100,7 +126,7 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
         ))}
       </div>
       <div className={transactionClass}>
-        <div>
+        {/* <div>
           <div className="transaction-group">
             <select
               onChange={(e) => {
@@ -143,10 +169,11 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
               value={new Intl.NumberFormat("fa-IR").format(selectedCashAmount)}
             />
           </div>
-        </div>
+        </div> */}
         <div className="transaction-btngroup">
           <div>
             <button
+              disabled={isProcess}
               onClick={() => {
                 exportOrderHandler();
               }}
@@ -154,7 +181,7 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
             >
               تسویه از کیف پول
             </button>
-            <button
+            {/* <button
               onClick={() => {
                 const data = {
                   bank: selectedBank,
@@ -172,9 +199,10 @@ const ConfirmOrderForm = ({ user, totalPriceOrder, orders, isOpen }) => {
               className="transaction-btn transaction-btn--primary"
             >
               واریز و تسویه
-            </button>
+            </button> */}
           </div>
           <button
+            disabled={isProcess}
             className="transaction-btn transaction-btn--secondary"
             onClick={() => setOpenTransaction(false)}
           >
@@ -204,6 +232,19 @@ const Container = styled("div")(() => ({
   flexDirection: "column",
   overflow: "hidden",
   height: "100%",
+  position: "relative",
+  "& .loading": {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+    background: "rgba(255,255,255,0.9)",
+  },
   ".profile": {
     textAlign: "center",
     borderBottom: "2px solid #eee",
