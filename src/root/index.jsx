@@ -37,6 +37,19 @@ const Root = () => {
   );
   const [user, setUser] = useState();
   const orderRef = useRef(null);
+  const [deviceWidth, setDeviceWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDeviceWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const handleOrderOutsideClick = (e) => {
@@ -155,7 +168,21 @@ const Root = () => {
       <DetailContainer>
         <Products>
           <div className="header">
-            <h1 className="header-text">محصولات</h1>
+            <div>
+              <h1 className="header-text">محصولات</h1>
+              {deviceWidth < 1200 && (
+                <p className="header-total">
+                  مبلغ کل{" "}
+                  {new Intl.NumberFormat("fa-IR").format(
+                    orders.reduce(
+                      (acc, item) => acc + item.price * item.count,
+                      0
+                    )
+                  )}{" "}
+                  تومان
+                </p>
+              )}
+            </div>
             <button
               className="header-btn"
               onClick={() => {
@@ -652,6 +679,10 @@ const Products = styled("div")(() => ({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
+
+    "&-total": {
+      fontSize: "12px",
+    },
 
     "&-badge": {
       position: "absolute",
