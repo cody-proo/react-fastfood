@@ -523,7 +523,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     cursor: "pointer",
     fontFamily: "iransans",
 
-    "@media(max-width: 600px)": {
+    "@media(max-width: 800px)": {
       width: "100%",
       marginTop: "10px",
     },
@@ -536,7 +536,7 @@ const Order = styled("div")(({ isOpenInMobile }) => ({
     justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: "15px",
-    "@media(max-width: 600px)": {
+    "@media(max-width: 800px)": {
       flexDirection: "column",
       "&-content": {
         width: "100%",

@@ -6,7 +6,7 @@ const Modal = ({ children, title, onClose, isOpen }) => {
   const modalStatusClass = isOpen ? "" : "close";
 
   return (
-    <Container className={modalStatusClass} onClick={onClose}>
+    <Container className={modalStatusClass}>
       <div onClick={onPreventClose} className="content">
         <div className="content-header">
           <h1 className="content-title">{title}</h1>

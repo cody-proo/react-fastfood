@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { loginService } from "../services";
 import ReactLoading from "react-loading";
+import Keyboard from "./keyboard";
 
 const AuthorizedForm = ({
   setConfirmModalStatus,
@@ -13,6 +14,8 @@ const AuthorizedForm = ({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmit, setSubmit] = useState(false);
+  const [usernameKeyboard, setUsernameKeyboard] = useState(false);
+  const [passwordKeyboard, setPasswordKeyboard] = useState(false);
 
   const { isLoading, mutate } = useMutation("login", loginService, {
     onSuccess: (data) => {
@@ -62,30 +65,78 @@ const AuthorizedForm = ({
     }
   };
 
+  const usernamerRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  useEffect(() => {
+    const handleEvent = (e) => {
+      if (!usernamerRef.current?.contains(e.target)) {
+        setUsernameKeyboard(false);
+      }
+      if (!passwordRef.current?.contains(e.target)) {
+        setPasswordKeyboard(false);
+      }
+    };
+
+    window.addEventListener("click", handleEvent, { capture: true });
+    return () => {
+      window.removeEventListener("click", handleEvent);
+    };
+  }, []);
+
   return (
     <Form onSubmit={handleSubmit}>
       <div className="input-group">
         <label className="input-label">شماره موبایل</label>
-        <input
-          className="input"
-          type="phone"
-          placeholder="شماره تلفن خود را وارد کنید"
-          value={username}
-          onChange={handleUsername}
-        />
-        <span className="input-error">
-          {!isValidMobileNumber() ? "شماره موبایل خود را درست وارد کنید" : ""}
-        </span>
+        <div className="input-keyboard" ref={usernamerRef}>
+          <input
+            className="input"
+            type="phone"
+            placeholder="شماره تلفن خود را وارد کنید"
+            value={username}
+            onChange={handleUsername}
+            onFocus={() => setUsernameKeyboard(true)}
+            readOnly
+          />
+          <span
+            className={`input-error ${
+              isValidMobileNumber() ? "input-error-none" : ""
+            }`}
+          >
+            {!isValidMobileNumber()
+              ? "شماره موبایل خود را درست وارد کنید"
+              : "NO Error"}
+          </span>
+          {usernameKeyboard && (
+            <Keyboard
+              setValue={setUsername}
+              isOpen={usernameKeyboard}
+              setOpen={setUsernameKeyboard}
+            />
+          )}
+        </div>
       </div>
       <div className="input-group">
         <label className="input-label">گذرواژه</label>
-        <input
-          className="input"
-          type="password"
-          placeholder="گذرواژه خود را وارد کنید"
-          value={password}
-          onChange={handlePassword}
-        />
+        <div className="input-keyboard" ref={passwordRef}>
+          <input
+            className="input"
+            type="password"
+            placeholder="گذرواژه خود را وارد کنید"
+            value={password}
+            onChange={handlePassword}
+            onFocus={() => setPasswordKeyboard(true)}
+            readOnly
+          />
+          {passwordKeyboard && (
+            <Keyboard
+              setValue={setPassword}
+              isOpen={passwordKeyboard}
+              setOpen={setPasswordKeyboard}
+            />
+          )}
+          <span className="input-error input-error-none">{" No Error  "}</span>
+        </div>
       </div>
       <button
         {...(isSubmit ? { disabled: true } : {})}
@@ -122,6 +173,11 @@ const Form = styled("form")(() => ({
     border: "1px solid #ccc",
     borderRadius: "4px",
     fontSize: "16px",
+    "&-keyboard": {
+      display: "flex",
+      flexDirection: "column",
+      position: "relative",
+    },
     "&::placeholder": {
       color: "#ccc",
     },
@@ -129,11 +185,17 @@ const Form = styled("form")(() => ({
       display: "flex",
       flexDirection: "column",
       marginBottom: "10px",
+      position: "relative",
     },
     "&-error": {
       fontSize: "12px",
       marginTop: "4px",
       color: "red",
+      "&-none": {
+        opacity: 0,
+        pointerEvent: "default",
+        userSelect: "none",
+      },
     },
   },
   ".btn": {
