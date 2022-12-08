@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.9f286849.css",
+    "main.js": "/static/js/main.b4ebb4d3.js",
+    "static/media/GymBG.png": "/static/media/GymBG.5a9266e1d7d89936d83e.png",
+    "static/media/iransans.woff2": "/static/media/iransans.ad42a3e7d4c08e9f2d24.woff2",
+    "index.html": "/index.html",
+    "main.9f286849.css.map": "/static/css/main.9f286849.css.map",
+    "main.b4ebb4d3.js.map": "/static/js/main.b4ebb4d3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9f286849.css",
+    "static/js/main.b4ebb4d3.js"
+  ]
+}
