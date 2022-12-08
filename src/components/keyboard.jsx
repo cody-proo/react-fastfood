@@ -1,21 +1,23 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { BiExit } from "react-icons/bi";
+import { BiCheck, BiExit } from "react-icons/bi";
 
 const Container = styled("div")(() => ({
   position: "absolute",
-  bottom: -100,
+  bottom: -220,
   left: "50%",
   transform: "translateX(-50%)",
-  width: "100%",
+  width: "200px",
   background: "#fff",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   zIndex: 999999,
+  border: "1px solid #eee",
+  direction: "ltr",
   flexWrap: "wrap",
   "@media(max-width: 470px)": {
-    bottom: -160,
+    bottom: -220,
   },
   "&.close": {
     display: "none",
@@ -31,6 +33,16 @@ const Container = styled("div")(() => ({
     cursor: "pointer",
     fontSize: "20px",
     userSelect: "none",
+    borderLeft: "unset",
+    "&:nth-child(3n)": {
+      borderRight: "unset",
+    },
+    "&:nth-child(1), &:nth-child(2), &:nth-child(3)": {
+      borderTop: "unset",
+    },
+    "&:nth-child(7), &:nth-child(8), &:nth-child(9)": {
+      borderTop: "unset",
+    },
   },
 }));
 
@@ -70,7 +82,15 @@ const Keyboard = ({ isOpen, setOpen, setValue }) => {
           });
         }}
       >
-        <BiExit fontSize={30} />
+        <BiExit color="red" fontSize={30} />
+      </div>
+      <div
+        className="item"
+        onClick={() => {
+          setOpen(false);
+        }}
+      >
+        <BiCheck color="green" fontSize={30} />
       </div>
     </Container>
   );
