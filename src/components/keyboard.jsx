@@ -64,7 +64,7 @@ const Keyboard = ({ isOpen, setOpen, setValue }) => {
   }, []);
   return (
     <Container ref={containerRef} className={keyboardClass}>
-      {new Array(10).fill(0).map((e, index) => (
+      {new Array(9).fill(0).map((e, index) => (
         <div
           onClick={() => setValue((prevValue) => prevValue + index)}
           className="item"
@@ -72,6 +72,21 @@ const Keyboard = ({ isOpen, setOpen, setValue }) => {
           {index}
         </div>
       ))}
+      <div
+        className="item"
+        onClick={() => {
+          setOpen(false);
+        }}
+      >
+        <BiCheck color="green" fontSize={30} />
+      </div>
+
+      <div
+        onClick={() => setValue((prevValue) => prevValue + 0)}
+        className="item"
+      >
+        0
+      </div>
       <div
         className="item"
         onClick={() => {
@@ -83,14 +98,6 @@ const Keyboard = ({ isOpen, setOpen, setValue }) => {
         }}
       >
         <BiExit color="red" fontSize={30} />
-      </div>
-      <div
-        className="item"
-        onClick={() => {
-          setOpen(false);
-        }}
-      >
-        <BiCheck color="green" fontSize={30} />
       </div>
     </Container>
   );
